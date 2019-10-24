@@ -1,0 +1,48 @@
+{% set version = "3351f54" %}
+{% set sha256 = "965b20f67c6ba68352b838da6301533e7e02ba575b15114eed3e3b2bbaf57ebe" %}
+
+package:
+  name: nngpp
+  version: "2019.4.20"
+
+source:
+  url: https://github.com/cwzx/nngpp/archive/{{ version }}.zip
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  skip: True  # [win and vc<14]
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - cmake >=3.1
+    - ninja
+    - nng
+  host: []  # Empty host dependency section
+  run:
+    - nng
+
+extra:
+  channels:
+    - simpleroseinc
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/nngpp/nngpp.h              # [unix]
+    - test -f ${PREFIX}/lib/cmake/nngpp/nngpp-config.cmake # [unix]
+    - if exist %LIBRARY_INC%\nngpp\nngpp.h (exit 0) else (exit 1)                  # [win]
+    - if exist %LIBRARY_LIB%\cmake\nngpp\nngpp-config.cmake (exit 0) else (exit 1) # [win]
+
+about:
+  home: https://github.com/cwzx/nngpp
+  license: MIT
+  license_file: license.txt
+  summary: C++ wrapper around the nanomsg NNG API
+  description: |
+    What's nanomsg? In a nutshell it's a spiritual successor to ZeroMQ,
+    and NNG is its latest incarnation.
+
+extra:
+  recipe-maintainers:
+    - zhihao.yuan
